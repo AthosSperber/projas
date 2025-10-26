@@ -92,7 +92,7 @@ def submit():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route("/report")
-def report():
+def relatorio():
     try:
         relatorio_path = os.path.join(DATA_DIR, "relatorio_latest.pdf")
         if os.path.exists(relatorio_path):
