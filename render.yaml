@@ -8,18 +8,3 @@ services:
       pip install -r requirements.txt
     startCommand: gunicorn app:app
     plan: free
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.9
-      - key: FLASK_ENV
-        value: production
-    staticPublishPath: static
-    healthCheckPath: /
-    autoDeploy: true
-    buildFilter:
-      paths:
-        - app.py
-        - templates/**
-        - static/**
-        - requirements.txt
-        - render.yaml
