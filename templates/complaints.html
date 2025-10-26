@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Reclamações — ReclameAli+{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Reclamações</h2>
+    <div>
+      <input id="filterInput" class="form-control d-inline-block me-2" style="width:260px" placeholder="Filtrar...">
+      <button id="btnExportCSV" class="btn btn-outline-secondary">Exportar CSV</button>
+    </div>
+  </div>
+  <div class="table-responsive shadow-sm">
+    <table class="table table-hover" id="complaintsTable">
+      <thead class="table-light"><tr><th>Nome</th><th>E-mail</th><th>Descrição</th><th>Data</th></tr></thead>
+      <tbody>
+        {% for c in complaints %}
+        <tr>
+          <td>{{ c.nome }}</td>
+          <td>{{ c.email }}</td>
+          <td>{{ c.descricao }}</td>
+          <td>{{ c.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/complaints.js') }}"></script>
+{% endblock %}

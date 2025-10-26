@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Início — ReclameAli+{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row align-items-center">
+    <div class="col-lg-6">
+      <h1 class="display-5 fw-bold">Diga o que deu errado. A gente analisa.</h1>
+      <p class="lead text-muted">Envie sua reclamação e gere relatórios com análise de sentimento automaticamente.</p>
+      <a href="{{ url_for('relatorio_page') }}" class="btn btn-primary btn-lg">Ir para Relatórios</a>
+    </div>
+    <div class="col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5>Enviar Reclamação</h5>
+          <form id="meuForm" method="post" action="/submit">
+            <div class="mb-2">
+              <input class="form-control" id="nome" name="nome" placeholder="Seu nome" required>
+            </div>
+            <div class="mb-2">
+              <input class="form-control" id="email" name="email" type="email" placeholder="Seu e-mail" required>
+            </div>
+            <div class="mb-2">
+              <textarea class="form-control" id="descricao" name="descricao" rows="4" placeholder="Descreva o problema" required></textarea>
+            </div>
+            <button class="btn btn-success w-100" type="submit">Enviar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}
