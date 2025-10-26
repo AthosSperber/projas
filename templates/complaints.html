@@ -1,1 +1,27 @@
-{% extends 'base.html' %}{% block content %}<h2>Reclamações</h2><div class="table-responsive"><table class="table"><thead><tr><th>Nome</th><th>Email</th><th>Descrição</th><th>Data</th></tr></thead><tbody>{% for c in complaints %}<tr><td>{{ c.get('nome') }}</td><td>{{ c.get('email') }}</td><td class="compl-text">{{ c.get('descricao') }}</td><td>{{ c.get('created_at') }}</td></tr>{% endfor %}</tbody></table></div>{% endblock %}
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Reclamações</h2>
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Descrição</th>
+        <th>Data</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in complaints %}
+      <tr>
+        <td>{{ c.get('nome') }}</td>
+        <td>{{ c.get('email') }}</td>
+        <td class="compl-text">{{ c.get('descricao') }}</td>
+        <td>{{ c.get('created_at') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
