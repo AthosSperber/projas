@@ -7,3 +7,4 @@ reportlab
 gspread
 google-auth
 transformers>=4.0.0
+gunicorn
