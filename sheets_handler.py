@@ -1,43 +1,53 @@
 import os
 from datetime import datetime
+
+# Tenta importar o gspread e google-auth
 try:
     import gspread
     from google.oauth2.service_account import Credentials
+    GSPREAD_AVAILABLE = True
+    print("✔️ gspread disponível.")
 except Exception as e:
-    raise
+    print("⚠️ gspread/google-auth indisponível:", e)
+    GSPREAD_AVAILABLE = False
 
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive"]
-SERVICE_ACCOUNT_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS','service_account.json')
-SHEET_NAME = os.environ.get('SHEET_NAME','reclameali_data')
+# Escopos e caminho de credenciais
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+SERVICE_ACCOUNT_PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "service_account.json")
+SHEET_NAME = os.environ.get("SHEET_NAME", "reclameali_data")
 
 def _open():
+    """Abre a planilha no Google Sheets"""
+    if not GSPREAD_AVAILABLE:
+        raise RuntimeError("Biblioteca gspread não disponível.")
     creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_PATH, scopes=SCOPES)
     client = gspread.authorize(creds)
     return client.open(SHEET_NAME)
 
 def add_complaint(nome, email, descricao):
-    sh = _open()
+    """Adiciona uma nova reclamação na planilha"""
+    if not GSPREAD_AVAILABLE:
+        print("⚠️ gspread não disponível — salvamento ignorado.")
+        return False
     try:
-        ws = sh.worksheet('Reclamacoes')
-    except Exception:
-        ws = sh.add_worksheet('Reclamacoes', rows=1000, cols=10)
-        ws.append_row(['ID','Nome','Email','Descricao','Data'])
-    ws.append_row([int(datetime.utcnow().timestamp()), nome, email, descricao, datetime.utcnow().isoformat()])
+        sheet = _open().sheet1
+        sheet.append_row([datetime.utcnow().isoformat(), nome, email, descricao])
+        print(f"✔️ Reclamação adicionada no Google Sheets: {nome}")
+        return True
+    except Exception as e:
+        print("❌ Erro ao adicionar reclamação:", e)
+        return False
 
 def fetch_reclamacoes():
-    sh = _open()
-    try:
-        ws = sh.worksheet('Reclamacoes')
-        return ws.get_all_records()
-    except Exception as e:
-        print("fetch_reclamacoes error:", e)
+    """Busca todas as reclamações do Google Sheets"""
+    if not GSPREAD_AVAILABLE:
+        print("⚠️ gspread não disponível — retornando lista vazia.")
         return []
-
-def add_analysis(pos, neu, neg):
-    sh = _open()
     try:
-        ws = sh.worksheet('Analises')
-    except Exception:
-        ws = sh.add_worksheet('Analises', rows=1000, cols=10)
-        ws.append_row(['Data','Positivo','Neutro','Negativo'])
-    ws.append_row([datetime.utcnow().isoformat(), pos, neu, neg])
+        sheet = _open().sheet1
+        records = sheet.get_all_records()
+        print(f"✔️ {len(records)} reclamações carregadas do Google Sheets.")
+        return records
+    except Exception as e:
+        print("❌ Erro ao buscar reclamações:", e)
+        return []
