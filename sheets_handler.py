@@ -1,53 +1,95 @@
+# ======================================
+# sheets_handler.py — Integração com Google Sheets
+# Sistema: ReclameAli+
+# ======================================
+
 import os
-from datetime import datetime
+import json
+import gspread  # Biblioteca usada para conectar e editar planilhas do Google
+from google.oauth2.service_account import Credentials
 
-# Tenta importar o gspread e google-auth
-try:
-    import gspread
-    from google.oauth2.service_account import Credentials
-    GSPREAD_AVAILABLE = True
-    print("✔️ gspread disponível.")
-except Exception as e:
-    print("⚠️ gspread/google-auth indisponível:", e)
-    GSPREAD_AVAILABLE = False
+# ================== CONFIGURAÇÕES ==================
 
-# Escopos e caminho de credenciais
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-SERVICE_ACCOUNT_PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "service_account.json")
-SHEET_NAME = os.environ.get("SHEET_NAME", "reclameali_data")
+# Escopos de permissão exigidos pela API do Google Sheets
+# Eles permitem ler e escrever nas planilhas associadas à conta de serviço.
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
-def _open():
-    """Abre a planilha no Google Sheets"""
-    if not GSPREAD_AVAILABLE:
-        raise RuntimeError("Biblioteca gspread não disponível.")
-    creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_PATH, scopes=SCOPES)
-    client = gspread.authorize(creds)
-    return client.open(SHEET_NAME)
+# ID da planilha (copiado da URL do Google Sheets)
+SHEET_ID = os.environ.get("GOOGLE_SHEET_ID", "")
 
-def add_complaint(nome, email, descricao):
-    """Adiciona uma nova reclamação na planilha"""
-    if not GSPREAD_AVAILABLE:
-        print("⚠️ gspread não disponível — salvamento ignorado.")
-        return False
+# Nome da aba dentro da planilha
+SHEET_NAME = os.environ.get("GOOGLE_SHEET_NAME", "Reclamacoes")
+
+# ================== AUTENTICAÇÃO ==================
+
+def get_client():
+    
+    """
+    Cria e retorna um cliente gspread autenticado com a conta de serviço.
+    Ele usa o arquivo service_account.json (gerado no app.py).
+    """
+
     try:
-        sheet = _open().sheet1
-        sheet.append_row([datetime.utcnow().isoformat(), nome, email, descricao])
-        print(f"✔️ Reclamação adicionada no Google Sheets: {nome}")
-        return True
+        creds = Credentials.from_service_account_file(
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"],
+            scopes=SCOPES
+        )
+        client = gspread.authorize(creds)
+        return client
     except Exception as e:
-        print("❌ Erro ao adicionar reclamação:", e)
-        return False
+        print("❌ Erro ao autenticar no Google Sheets:", e)
+        raise
+
+# ================== FUNÇÕES DE OPERAÇÃO ==================
 
 def fetch_reclamacoes():
-    """Busca todas as reclamações do Google Sheets"""
-    if not GSPREAD_AVAILABLE:
-        print("⚠️ gspread não disponível — retornando lista vazia.")
-        return []
+    
+    """
+    Busca todas as reclamações existentes na planilha.
+    Retorna uma lista de dicionários (cada linha da planilha vira um registro JSON).
+    """
+
     try:
-        sheet = _open().sheet1
+        client = get_client()
+        sheet = client.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
+        
+        # Obtém todas as linhas da planilha
         records = sheet.get_all_records()
-        print(f"✔️ {len(records)} reclamações carregadas do Google Sheets.")
+        print(f"📊 {len(records)} reclamações carregadas do Google Sheets.")
         return records
+
     except Exception as e:
-        print("❌ Erro ao buscar reclamações:", e)
+        print("❌ Erro ao carregar dados do Google Sheets:", e)
         return []
+
+
+def add_complaint(data):
+    
+    """
+    Adiciona uma nova reclamação à planilha do Google Sheets.
+    Espera receber um dicionário 'data' com as chaves:
+      - nome
+      - email (opcional)
+      - descricao
+      - data_envio
+    """
+
+    try:
+        client = get_client()
+        sheet = client.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
+
+        # Extrai os dados esperados
+        nome = data.get("nome", "")
+        email = data.get("email", "")
+        descricao = data.get("descricao", "")
+        data_envio = data.get("data_envio", "")
+
+        # Adiciona nova linha à planilha
+        sheet.append_row([nome, email, descricao, data_envio])
+        print(f"✅ Reclamação adicionada com sucesso: {nome}")
+
+    except Exception as e:
+        print("❌ Erro ao adicionar reclamação no Google Sheets:", e)
+        raise
+
+
