@@ -71,13 +71,13 @@ def index():
 @app.route("/report")
 def report():
     
-    """
+    '''
     Página de relatório de análise de sentimento.
     Renderiza o arquivo 'templates/report.html'.
-    """
+    '''
+    
 
     return render_template("report.html")
-
 
 @app.route("/complaints")
 def complaints():
@@ -146,7 +146,7 @@ def add_complaint_route():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
-@app.route("/report/<filename>")
+@app.route("/download_report/<filename>")
 def download_report(filename):
     
     """
