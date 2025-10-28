@@ -68,6 +68,16 @@ def index():
 
     return render_template("index.html")
 
+@app.route("/report")
+def report():
+    
+    """
+    Página de relatório de análise de sentimento.
+    Renderiza o arquivo 'templates/report.html'.
+    """
+
+    return render_template("report.html")
+
 
 @app.route("/complaints")
 def complaints():

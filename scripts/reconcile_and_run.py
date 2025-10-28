@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 import os, subprocess, sys
 from email_sender import send
 

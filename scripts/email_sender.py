@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 import os, smtplib
 from email.message import EmailMessage
 def send(path, to):
