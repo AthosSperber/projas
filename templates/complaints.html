@@ -1,14 +1,10 @@
 {% extends 'base.html' %}
-{# 
-  Este arquivo herda o layout principal de base.html.
-  Assim, o cabeçalho, rodapé e o menu vêm automaticamente da base.
-#}
 
 {% block content %}
-  <!-- Título da página -->
+
   <h2 class="mb-4 text-primary fw-semibold">Reclamações Registradas</h2>
 
-  <!-- Div responsiva para a tabela (permite rolagem no celular) -->
+  <!-- Div responsiva para a tabela  -->
   <div class="table-responsive shadow-sm rounded-3">
     <table class="table align-middle table-striped table-hover">
       <thead class="table-primary">
@@ -21,13 +17,12 @@
       </thead>
 
       <tbody>
-        {# Loop que percorre todas as reclamações recebidas do backend #}
         {% for c in complaints %}
           <tr>
             <!-- Exibe o nome do reclamante -->
             <td>{{ c.get('nome') }}</td>
 
-            <!-- Exibe o e-mail (pode ser usado para contato) -->
+            <!-- Exibe o e-mail -->
             <td>{{ c.get('email') }}</td>
 
             <!-- Exibe a descrição da reclamação -->
@@ -39,7 +34,6 @@
             <td>{{ c.get('created_at') }}</td>
           </tr>
         {% else %}
-          {# Caso não haja reclamações cadastradas #}
           <tr>
             <td colspan="4" class="text-center text-muted py-4">
               Nenhuma reclamação registrada ainda.

@@ -1,8 +1,3 @@
-# ======================================
-# sheets_handler.py — Integração com Google Sheets
-# Sistema: ReclameAli+
-# ======================================
-
 import os
 import json
 import gspread  # Biblioteca usada para conectar e editar planilhas do Google
