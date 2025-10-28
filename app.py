@@ -70,7 +70,7 @@ def index():
 
 @app.route("/report")
 def report():
-    
+
     '''
     Página de relatório de análise de sentimento.
     Renderiza o arquivo 'templates/report.html'.
@@ -105,7 +105,7 @@ def complaints():
 
 
 @app.route("/add_complaint", methods=["POST"])
-def add_complaint_route():
+def add_complaint():
     
     """
     Adiciona uma nova reclamação.

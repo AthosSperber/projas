@@ -52,7 +52,7 @@
       <h5 class="fw-semibold mb-3 text-center">📨 Enviar Reclamação</h5>
 
       <!-- Formulário que envia os dados para a rota Flask 'submit' -->
-      <form id="meuForm" method="post" action="{{ url_for('add_complaint_route') }}">
+      <form id="meuForm" method="post" action="{{ url_for('add_complaint') }}">
         <!-- Campo Nome -->
         <input class="form-control mb-2" 
                name="nome" 
